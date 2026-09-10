@@ -49,5 +49,23 @@ enum PlantStatus {
     case upcoming
 }
 
+extension Plant {
+    var nextDueDate: Date {
+        Calendar.current.date(byAdding: .day, value: interval.days, to: lastWatered) ?? lastWatered
+    }
+
+    var daysUntilDue: Int {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let due = cal.startOfDay(for: nextDueDate)
+        return cal.dateComponents([.day], from: today, to: due).day ?? 0
+    }
+
+    var status: PlantStatus {
+        if daysUntilDue < 0 { return .overdue }
+        if daysUntilDue == 0 { return .dueToday }
+        return .upcoming
+    }
+}
 
 

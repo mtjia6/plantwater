@@ -6,6 +6,7 @@
 //
 import Foundation
 import SwiftUI
+import Combine
 
 class PlantStore: ObservableObject {
     @Published var plants: [Plant] = []
@@ -25,10 +26,21 @@ class PlantStore: ObservableObject {
         }
     }
     
-    func update(_ plant: Plant) {
-        if let index = plants.firstIndex(where: {$0.id == plant.id}) {
-            plants[index] = plant
+    func editPlant(id: UUID, name: String, emoji: String, interval: WateringInterval) {
+        if let index = plants.firstIndex(where: {$0.id == id}) {
+            plants[index].name = name
+            plants[index].emoji = emoji
+            plants[index].interval = interval
         }
+    }
+    
+    init() {
+        addPlant(name: "Monstera", emoji: "🌿", interval: .week)
+        addPlant(name: "Snake Plant", emoji: "🐍", interval: .month)
+        addPlant(name: "Aloe Vera", emoji: "🪴", interval: .twoWeeks)
+        
+        plants.append(Plant(name: "Basil", emoji: "🌱", interval: .everyDay,
+                            lastWatered: Calendar.current.date(byAdding: .day, value: -5, to: Date())!))
     }
     
     
