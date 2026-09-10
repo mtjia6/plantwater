@@ -109,8 +109,11 @@ struct FeaturedPlantCard: View {
                         Text(plant.name)
                             .font(.title3.weight(.bold))
                             .foregroundStyle(Color.ink)
-                        Text(subtitle)
-                            .font(.subheadline)
+                        Text(statusText)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(accent)
+                        Text("\(plant.interval.label) · Due \(dueString)")
+                            .font(.caption)
                             .foregroundStyle(Color.warmGray)
                     }
                     Spacer()
@@ -130,12 +133,17 @@ struct FeaturedPlantCard: View {
             }
         }
         .padding(16)
-        .background(RoundedRectangle(cornerRadius: 24).fill(Color.sage))
+        .background(RoundedRectangle(cornerRadius: 24).fill(accent.opacity(0.15)))
     }
 
-    private var subtitle: String {
-        let base = plant.status == .overdue ? "\(-plant.daysUntilDue) days overdue" : "Due today"
-        return "\(base) · \(plant.interval.label)"
+    private var accent: Color {
+        plant.status == .overdue ? .red : Color(red: 0.85, green: 0.6, blue: 0.1)
+    }
+    private var statusText: String {
+        plant.status == .overdue ? "\(-plant.daysUntilDue) days overdue" : "Due today"
+    }
+    private var dueString: String {
+        plant.nextDueDate.formatted(.dateTime.month(.abbreviated).day())
     }
 }
 
@@ -156,7 +164,7 @@ struct UpcomingRow: View {
                     Text(plant.name)
                         .font(.headline)
                         .foregroundStyle(Color.ink)
-                    Text(plant.interval.label)
+                    Text("\(plant.interval.label) · \(plant.nextDueDate.formatted(.dateTime.month(.abbreviated).day()))")
                         .font(.subheadline)
                         .foregroundStyle(Color.warmGray)
                 }
